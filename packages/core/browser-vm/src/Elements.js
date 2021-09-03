@@ -42,13 +42,14 @@ const makeElInjector = (originMethod) => function( el, ...args ){
     el.ownerContext.evalScript(el.scriptText);
   }
 
-  // fix: babel 会把 fn.call 转义成 fn.call.apply 造成 chrome 50 的几个版本报错
-  // 这里 尝试 try catch 如果报错 直接调用 fn.apply
 
-  try {
-    return originMethod.call( this, el, ...args );
-  } catch {
+  // fn.call( this, el, ...args ) 写法会被 babel 转换为 fn.call.apply(fn, [this, el].concat(args)) ,
+  // el 为 undefined 时, fn apply 的参数列表为 [undefined] ,
+  // 调用 append 时会造成元素被 append 一个内容为 undefined 的 TextNode .
+  if ( el || args.length ) {
     return originMethod.apply( this, [el, ...args] );
+  } else {
+    return originMethod.call( this )
   }
 }
 
