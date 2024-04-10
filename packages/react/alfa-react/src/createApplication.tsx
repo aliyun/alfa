@@ -395,6 +395,12 @@ export default function createApplication(loader: BaseLoader) {
           customProps,
         });
 
+        logger?.record && logger?.record({
+          END_TIME: Date.now(),
+        });
+
+        logger?.send && logger?.send();
+
         if (frameWindow) {
           // 每次挂载后主动触发子应用内的 popstate 事件，借此触发 react-router history 的检查逻辑
           dispatchFramePopstate();

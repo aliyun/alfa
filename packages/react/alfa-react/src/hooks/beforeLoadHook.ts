@@ -55,16 +55,11 @@ async function afterLoadHook(appConfig: IAppConfig) {
     });
   }
 
-  const END_TIME = Date.now();
-
   logger?.record && logger.record({
     CONFIG_START_TIME,
     CONFIG_END_TIME,
-    END_TIME,
     COST: CONFIG_END_TIME - CONFIG_START_TIME,
   });
-
-  logger?.send && logger.send();
 
   return appConfig;
 }
