@@ -8,8 +8,8 @@ interface IAliyunWin extends IWin {
 }
 
 // inject consoleConfig & locales after load
-async function afterLoadHook(appConfig: IAppConfig) {
-  const { app, logger, sandbox, dynamicConfig } = appConfig;
+async function afterLoadHook(appConfig: IAppConfig & { channel?: string }) {
+  const { app, logger, sandbox, dynamicConfig, channel } = appConfig;
 
   const defaultConsoleConfig = (window as IWin).ALIYUN_CONSOLE_CONFIG || {};
   const defaultConsoleGlobal = (window as IWin).ALIYUN_CONSOLE_GLOBAL || {};
@@ -21,7 +21,7 @@ async function afterLoadHook(appConfig: IAppConfig) {
     const configData = await getConfig(appConfig);
 
     const [consoleConfig, consoleGlobal, messages] = await Promise.all([
-      getConsoleConfig(configData, defaultConsoleConfig),
+      getConsoleConfig(configData, defaultConsoleConfig, channel),
       getConsoleGlobal(configData, defaultConsoleGlobal),
       getI18nMessages(appConfig),
     ]);

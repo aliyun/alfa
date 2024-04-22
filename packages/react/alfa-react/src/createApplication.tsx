@@ -145,7 +145,7 @@ export default function createApplication(loader: BaseLoader) {
       name, version, manifest, loading, customProps, className, style, container,
       entry, url, logger: customLogger, deps, env, beforeMount, afterMount, beforeUnmount,
       afterUnmount, beforeUpdate, sandbox: customSandbox, locale, dynamicConfig, noCache,
-      syncHistory, syncRegion, syncResourceGroup, basename, onSyncHistory,
+      syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory,
     } = props;
     const { handleExternalLink } = customProps;
     const [appInstance, setAppInstance] = useState<MicroApplication | null>(null);
@@ -281,6 +281,7 @@ export default function createApplication(loader: BaseLoader) {
       noCache,
       // 用户自定义 manifest 且未传入 dynamicConfig 时，默认值为 false，否则为 true
       dynamicConfig: typeof dynamicConfig === 'boolean' ? dynamicConfig : !manifest,
+      channel,
     }), []);
 
     useEffect(() => {

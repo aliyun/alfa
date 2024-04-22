@@ -20,6 +20,10 @@ export interface AlfaFactoryOption extends IAppConfig {
   // url?: string;
   // manifest?: string;
   // deps?: Record<string, any>;
+  /**
+   * oneConsole 渠道
+   */
+  channel?: string;
   loading?: boolean | React.ReactChild;
   dependencies?: Record<string, any>;
   // style for container root
