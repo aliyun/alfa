@@ -1,6 +1,6 @@
 {
   "name": "@alicloud/alfa-react",
-  "version": "1.5.14",
+  "version": "1.5.15",
   "description": "Alfa Framework (React Version)",
   "main": "lib/index.js",
   "module": "es/index.js",
