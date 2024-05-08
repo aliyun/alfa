@@ -74,7 +74,7 @@ export function mount<T extends EmitterProps>(App: AppComponent<T>, container?: 
       bindEvents(emitter);
 
       if (isOsContext()) {
-        document.body.addEventListener('click', this.handleExternalLinks, true);
+        container.addEventListener('click', this.handleExternalLinks, true);
       }
     }
 
@@ -83,7 +83,7 @@ export function mount<T extends EmitterProps>(App: AppComponent<T>, container?: 
       unbindEvents(emitter);
 
       if (isOsContext()) {
-        document.body.removeEventListener('click', this.handleExternalLinks, true);
+        container.removeEventListener('click', this.handleExternalLinks, true);
       }
     }
 
