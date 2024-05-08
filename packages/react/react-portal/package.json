@@ -1,6 +1,6 @@
 {
   "name": "@alicloud/console-os-react-portal",
-  "version": "1.6.8",
+  "version": "1.6.9",
   "description": "Console OS React Portal",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -8,8 +8,7 @@
   "author": "Boelroy",
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build && npm run babel && npm run babel:esm && npm run types",
-    "build": "breezr build --engine webpack",
+    "prepublishOnly": "npm run babel && npm run babel:esm && npm run types",
     "babel": "breezr build --engine babel",
     "babel:esm": "breezr build --engine babel --es-module",
     "types": "tsc --emitDeclarationOnly -d --declarationDir ./types",

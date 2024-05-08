@@ -67,25 +67,9 @@ export function mount<T extends EmitterProps>(App: AppComponent<T>, container?: 
 
     componentDidCatch() { /* Empty */ }
 
-    componentDidMount() {
-      const props = getProps(this.props);
-      if (!props) { return; }
-      const { emitter } = props;
-      bindEvents(emitter);
+    componentDidMount() { /* Empty */ }
 
-      if (isOsContext()) {
-        container.addEventListener('click', this.handleExternalLinks, true);
-      }
-    }
-
-    componentWillUnmount() {
-      const { emitter } = getProps(this.props);
-      unbindEvents(emitter);
-
-      if (isOsContext()) {
-        container.removeEventListener('click', this.handleExternalLinks, true);
-      }
-    }
+    componentWillUnmount() { /* Empty */ }
 
     render() {
       const props = getProps(this.props);
@@ -109,43 +93,65 @@ export function mount<T extends EmitterProps>(App: AppComponent<T>, container?: 
         </ErrorBoundary>
       );
     }
-
-    /**
-     * @deprecated
-     * 针对 外跳 的路由提供简单的方式通知宿主
-     * @param e 点击事件
-     */
-    private handleExternalLinks = (e: Event) => {
-      const target = e.target as HTMLAnchorElement;
-      const { emitter, id: appId, name } = getProps(this.props);
-      if (target.tagName === 'A' && target.hasAttribute('data-alfa-external-router')) {
-        e.preventDefault();
-        e.stopPropagation();
-        emitter && emitter.emit(`${name || appId}:external-router`, target.getAttribute('href'));
-      }
-    };
   }
 
   if (isOsBundle() || isOsContext()) {
-    const reactLifecycles = SingleSpaReact({
+    const reactLifeCycles = SingleSpaReact({
       React,
       ReactDOM,
       rootComponent: ConsoleApp,
       domElementGetter: () => document.getElementsByTagName(id)[0],
     });
 
+    /**
+     * 针对 外跳 的路由提供简单的方式通知宿主
+     * @param e 点击事件
+     */
+    let handleExternalLinks;
+
     return {
       bootstrap: [
-        reactLifecycles.bootstrap,
+        reactLifeCycles.bootstrap,
       ],
       mount: [
-        reactLifecycles.mount,
+        reactLifeCycles.mount,
+        // 全局事件托管
+        async (props) => {
+          const { domElement } = props;
+          const { emitter, name } = getProps(props);
+
+          bindEvents(emitter);
+
+          if (isOsContext()) {
+            handleExternalLinks = (e: Event) => {
+              const target = e.target as HTMLAnchorElement;
+              if (target.tagName === 'A' && target.hasAttribute('data-alfa-external-router')) {
+                e.preventDefault();
+                e.stopPropagation();
+                emitter && emitter.emit(`${name || id}:external-router`, target.getAttribute('href'));
+              }
+            };
+            domElement?.addEventListener('click', handleExternalLinks, true);
+          }
+        },
       ],
       unmount: [
-        reactLifecycles.unmount,
+        // 注销全局事件托管
+        async (props) => {
+          const { domElement } = props;
+          const { emitter } = getProps(props);
+
+          unbindEvents(emitter);
+
+          if (isOsContext() && handleExternalLinks) {
+            domElement?.removeEventListener('click', handleExternalLinks, true);
+            handleExternalLinks = undefined;
+          }
+        },
+        reactLifeCycles.unmount,
       ],
       update: [
-        reactLifecycles.update,
+        reactLifeCycles.update,
       ],
       exposedModule: exposeModuleMap,
     };
