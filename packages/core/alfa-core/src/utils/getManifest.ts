@@ -39,7 +39,7 @@ const formatManifest = (manifestContent: Manifest, inputManifestUrl: string, rea
 };
 
 export const getManifest = async (config: IAppConfig) => {
-  const latestVersion = 'latest';
+  const latestVersionTag = 'latest';
   const { manifest, logger } = config;
 
   let entry: string | undefined;
@@ -51,7 +51,7 @@ export const getManifest = async (config: IAppConfig) => {
 
     entry = manifest;
   } else {
-    let { version = latestVersion } = config;
+    let { version = latestVersionTag } = config;
     releaseConfig = await getRelease(config);
 
     if (version) {
@@ -70,7 +70,18 @@ export const getManifest = async (config: IAppConfig) => {
         }
       }
 
+      // try to get version in versions
       entry = releaseConfig.versions?.[version]?.entry;
+
+      // if no entry found, fallback to latest tag
+      if (!entry) {
+        const latestVersion = releaseConfig['dist-tags']?.[latestVersionTag];
+
+        if (latestVersion) {
+          entry = releaseConfig.versions?.[latestVersion]?.entry;
+          version = latestVersion;
+        }
+      }
 
       // modify version in config
       config.version = version;
