@@ -46,7 +46,6 @@ function onScriptError(id: string, script: HTMLScriptElement, timeout: number) {
   }
 }
 
-
 /**
  * append script
  * @param {IBundleOption} bundle

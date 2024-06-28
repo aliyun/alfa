@@ -93,16 +93,19 @@ export class Application {
     }
 
     const parcel = mountRootParcel({
-      name: this.appInfo.name,
+      // unique name for multi instances
+      name: `${this.appInfo.name}_${Date.now()}`,
       bootstrap: flattenFnArray(this.remoteApp.bootstrap, 'bootstrap'),
       mount: flattenFnArray(this.remoteApp.mount, 'mount'),
       unmount: flattenFnArray(this.remoteApp.unmount, 'unmount'),
       update: flattenFnArray(this.remoteApp.update, 'update'),
     }, {
       domElement: dom || this.appInfo.dom,
+      name: this.appInfo.name,
       appProps: {
         emitter: createEventBus(),
         ...(customProps || this.appInfo.customProps),
+        __appInfo__: this.appInfo,
       },
     });
 
