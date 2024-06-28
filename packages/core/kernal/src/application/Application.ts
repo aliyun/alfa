@@ -101,8 +101,8 @@ export class Application {
       update: flattenFnArray(this.remoteApp.update, 'update'),
     }, {
       domElement: dom || this.appInfo.dom,
-      name: this.appInfo.name,
       appProps: {
+        name: this.appInfo.name,
         emitter: createEventBus(),
         ...(customProps || this.appInfo.customProps),
         __appInfo__: this.appInfo,
