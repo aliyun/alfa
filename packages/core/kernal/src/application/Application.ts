@@ -104,8 +104,8 @@ export class Application {
       appProps: {
         name: this.appInfo.name,
         emitter: createEventBus(),
-        ...(customProps || this.appInfo.customProps),
         __appInfo__: this.appInfo,
+        ...(customProps || this.appInfo.customProps),
       },
     });
 
@@ -117,8 +117,10 @@ export class Application {
   async update(props: any) {
     return this.parcel?.update({
       appProps: {
-        ...props,
+        name: this.appInfo.name,
         emitter: createEventBus(),
+        __appInfo__: this.appInfo,
+        ...props,
       },
     });
   }
