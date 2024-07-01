@@ -70,19 +70,44 @@ class Context {
   }
 
   evalScript(code, url = '') {
+    const currentScript = this.document.createElement('script');
+    currentScript.src = url;
+
     // eslint-disable-next-line no-new-func
     const resolver = new Function(`
-      return function ({window, location, history, document}){ 
+      return function ({window, location, history, document, __os_current_script__}){
+        var document = new Proxy(document, {
+          get: function get(target, prop) {
+            if (prop === "currentScript" && __os_current_script__) {
+              return __os_current_script__;
+            }
+            return target[prop];
+          }
+        });
+        var window = new Proxy(window, {
+          get: function get(target, prop) {
+            if (prop === "document") return document;
+            return target[prop];
+          }
+        })
+        var globalThis = window;
         with(window.__CONSOLE_OS_GLOBAL_VARS_) {
           try {
             ${code}
-          }
-          catch(e) {
+          } catch(e) {
             console.log(e)
           }
         }
-      }//@ sourceMappingURL=${url}`);
-    resolver().call(this.window, { ...this });
+      }//# sourceMappingURL=${url}`);
+
+    resolver()
+      .call(
+        this.window,
+        {
+          ...this,
+          __os_current_script__: currentScript,
+        },
+      );
   }
 
   updateBody(dom) {

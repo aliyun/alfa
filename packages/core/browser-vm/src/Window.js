@@ -67,6 +67,8 @@ class Window {
         }
 
         switch (name) {
+          case 'window':
+            return context.window;
           case 'document':
             return context.document;
           case 'location':

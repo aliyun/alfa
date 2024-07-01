@@ -19,7 +19,7 @@ const makeElInjector = (originMethod, methodName) => function (el, ...args) {
       const e = new Event('load');
       el.onload && el.onload(e);
     }).catch((e) => {
-      console.error(e);
+      console.error(e, el.src);
       const fns = el._listenerMap.get('error');
       if (fns) {
         fns.forEach((fn) => { fn(e); });
