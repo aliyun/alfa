@@ -8,7 +8,12 @@ type Manifest = Exclude<IAppConfig['manifest'], string | undefined>;
 const formatURL = (origin: string, base: string) => {
   // incorrect: new URL('../b', 'https://example.com/a/c') => https://example.com/b
   // correct: new URL('../b', 'https://example.com/a/c/') => https://example.com/a/b
-  return new URL(origin, base.endsWith('/') ? base : `${base}/`).toString();
+  try {
+    return new URL(origin, base.endsWith('/') ? base : `${base}/`).toString();
+  } catch (e) {
+    // base maybe not legal
+    return origin;
+  }
 };
 
 /**
