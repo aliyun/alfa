@@ -1,6 +1,7 @@
 import md5 from 'crypto-js/md5';
 
 import { IAppConfig, AlfaFeature, IWin } from '../types';
+
 export { getEnv } from './env';
 export { getLocale } from './locale';
 
@@ -86,29 +87,33 @@ function trimArray(arr: string[]) {
  * @returns
  */
 export const getRelativePath = (from: string, to: string, base?: string) => {
-  const { host: fromHost, pathname: fromPath } = new URL(from, base || from);
-  const { host: toHost, pathname: toPath } = new URL(to, base || from);
+  try {
+    const { host: fromHost, pathname: fromPath } = new URL(from, base || from);
+    const { host: toHost, pathname: toPath } = new URL(to, base || from);
 
-  // from 'g.alicdn.com' to 'dev.g.alicdn.com' regarded as same host
-  if (fromHost !== toHost && (toHost !== 'g.alicdn.com' || fromHost !== 'dev.g.alicdn.com')) return to;
+    // from 'g.alicdn.com' to 'dev.g.alicdn.com' regarded as same host
+    if (fromHost !== toHost && (toHost !== 'g.alicdn.com' || fromHost !== 'dev.g.alicdn.com')) return to;
 
-  const fromParts = trimArray(fromPath.split('/'));
-  const toParts = trimArray(toPath.split('/'));
-  const length = Math.min(fromParts.length, toParts.length);
-  let samePartsLength = length;
+    const fromParts = trimArray(fromPath.split('/'));
+    const toParts = trimArray(toPath.split('/'));
+    const length = Math.min(fromParts.length, toParts.length);
+    let samePartsLength = length;
 
-  for (let i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
+    for (let i = 0; i < length; i++) {
+      if (fromParts[i] !== toParts[i]) {
+        samePartsLength = i;
+        break;
+      }
     }
+
+    const outputParts = [];
+
+    for (let i = samePartsLength; i < fromParts.length; i++) {
+      outputParts.push('..');
+    }
+
+    return outputParts.concat(toParts.slice(samePartsLength)).join('/');
+  } catch (e) {
+    return to;
   }
-
-  const outputParts = [];
-
-  for (let i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  return outputParts.concat(toParts.slice(samePartsLength)).join('/');
 };
