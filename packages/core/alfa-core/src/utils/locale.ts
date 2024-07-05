@@ -14,18 +14,15 @@ const localeMap: Record<string, string> = {
   de: 'de_DE',
 };
 
-const getLocaleFromCookie = () => {
-  const lang = getCookie('aliyun_lang');
-
-  return lang && localeMap[lang];
-};
-
 /**
- * x-X-Y to x_X_Y
+ * 1. x-X-Y to x_X_Y
+ * 2. zh to zh_CN
  * @param key
  * @returns
  */
-const formatLocale = (key: string) => key.replace('-', '_');
+const formatLocale = (key: string) => {
+  return localeMap[key] ? localeMap[key] : key.replace('-', '_');
+};
 
 /**
  * getLocale
@@ -33,6 +30,6 @@ const formatLocale = (key: string) => key.replace('-', '_');
  */
 export const getLocale = (key?: string): string => {
   return formatLocale(
-    key || (window as IWin)?.ALIYUN_CONSOLE_CONFIG?.LOCALE || getLocaleFromCookie() || globalLocale,
+    key || (window as IWin)?.ALIYUN_CONSOLE_CONFIG?.LOCALE || getCookie('aliyun_lang') || globalLocale,
   );
 };
