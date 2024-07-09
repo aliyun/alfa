@@ -22,21 +22,6 @@ const defaultExternals = [
   'open',
 ];
 
-function getContextWindow(context) {
-  const descriptor = Object.getOwnPropertyDescriptor(context, 'window');
-
-  if (descriptor) {
-    descriptor.configurable = true;
-    const hasGetter = Object.prototype.hasOwnProperty.call(descriptor, 'get');
-
-    if (!hasGetter) {
-      descriptor.writable = true;
-    }
-  }
-
-  return context.window;
-}
-
 class Window {
   constructor(options = {}, context, frame) {
     const externals = [
@@ -82,8 +67,8 @@ class Window {
         }
 
         switch (name) {
-          case 'window':
-            return getContextWindow(context);
+          // case 'window':
+          //   return getContextWindow(context);
           case 'document':
             return context.document;
           case 'location':
