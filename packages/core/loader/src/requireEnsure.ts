@@ -56,6 +56,8 @@ function jsonpRequire(id: string, url: string) {
   script.src = url;
 
   script.setAttribute('nonce', '');
+  // 用于加载的脚本判断来源
+  script.setAttribute('data-from', 'alfa');
 
   const timeout = window.setTimeout(() => {
     onScriptError(id, script, timeout);
