@@ -178,3 +178,10 @@ export const withCompatibleSyncHistory = (Comp: React.ComponentClass | React.FC,
 export const getBrowserUrl = () => {
   return window.parent.location.href;
 };
+
+/**
+ * 是否是 alfa 创建的 <script />
+ */
+export const isAlfaScript = () => {
+  return document?.currentScript?.getAttribute('data-from') === 'alfa';
+};

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import SingleSpaReact from 'single-spa-react';
 import { EventEmitter } from '@alicloud/console-os-events';
 
-import { getPathNameWithQueryAndSearch, isOsContext, isOsBundle } from './utils';
+import { getPathNameWithQueryAndSearch, isOsContext, isOsBundle, isAlfaScript } from './utils';
 import { Context } from './Context';
 import { IContextProps } from './types';
 import ErrorBoundary, { Logger } from './ErrorBoundary';
@@ -95,7 +95,9 @@ export function mount<T extends EmitterProps>(App: AppComponent<T>, container?: 
     }
   }
 
-  if (isOsBundle() || isOsContext()) {
+  // 如果外部被其他沙箱嵌套，沙箱销毁时一旦清除全局变量，isOsBundle 拿到的值将为 false
+  // 需要综合判断
+  if (isOsBundle() || isOsContext() || isAlfaScript()) {
     const reactLifeCycles = SingleSpaReact({
       React,
       ReactDOM,
