@@ -3,6 +3,30 @@ import { Module, Record } from './module/Module';
 import { IBundleOption } from './type';
 
 /**
+ * 更新模块的加载状态，如果加载执行成功，loaded 为 true，则设置 promise 状态 done
+ * @param id
+ */
+function resolveRecord(id: string) {
+  const record = Module.record.get(id);
+
+  if (record) {
+    // 加载完成时会通过全局 hook 注册，成功后设置 loaded 为 true
+    if (record.loaded) {
+      record.resolve();
+
+      if (id.endsWith('_scripts_')) {
+        Module.record.delete(id);
+      }
+    } else {
+      // 当记录中，该模块加载状态为 false，清除该记录
+      record.reject(record.error);
+
+      Module.record.delete(id);
+    }
+  }
+}
+
+/**
  * handle script loaded
  * @param id
  * @param script
@@ -13,23 +37,7 @@ function onScriptComplete(id: string, script: HTMLScriptElement, timeout: number
   script.onload = null;
   clearTimeout(timeout);
 
-  // 加载完成时会通过全局 hook 注册，成功后设置 loaded 为 true
-  // 当记录中，该模块加载状态为 false，清除该记录
-  const record = Module.record.get(id);
-
-  if (record) {
-    if (record.loaded) {
-      record.resolve();
-
-      if (id.endsWith('_scripts_')) {
-        Module.record.delete(id);
-      }
-    } else {
-      record.reject(record.error);
-
-      Module.record.delete(id);
-    }
-  }
+  resolveRecord(id);
 }
 
 /**
@@ -84,6 +92,8 @@ export async function xmlRequire(id: string, url: string, transform: (source: st
       ${transform(code)}
     }
   })`);
+
+  resolveRecord(id);
 }
 
 /**
