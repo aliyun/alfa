@@ -36,6 +36,7 @@ const AlfaApp = createAlfaApp({
   name: '@ali/alfa-cloud-gpdb-app-crosswise',
   // version: '0.1.0',
   env: 'pre',
+  loading: false,
   sandbox: {
     allowResources: [],
   },

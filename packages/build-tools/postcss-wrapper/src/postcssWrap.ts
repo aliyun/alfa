@@ -30,14 +30,11 @@ function increaseSpecifityOfRule(rule: postcss.Rule, opts: IOptions, cachedIconN
       return selector;
     }
 
+    const [firstNode, ...restNodes] = selector.split(/\s+/);
+
     // 替换部分 css selector 避免污染宿主
-    if (
-      selector === 'html' ||
-      selector === ':root' ||
-      selector === ':host' ||
-      selector === opts.stackableRoot
-    ) {
-      return opts.stackableRoot.repeat(opts.repeat);
+    if (firstNode && ['html', ':root', ':host', opts.stackableRoot].includes(firstNode)) {
+      return [opts.stackableRoot.repeat(opts.repeat), ...restNodes].join(' ');
     }
 
     // Otherwise just make it a descendant (this is what will happen most of the time)
