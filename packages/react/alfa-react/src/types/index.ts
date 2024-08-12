@@ -54,6 +54,10 @@ export interface AlfaFactoryOption extends IAppConfig {
    * @deprecated
    */
   fallbackRender?: (error?: Error) => Element;
+  /**
+   * 延迟加载
+   */
+  delay?: number;
 }
 
 // export interface CommonProps {

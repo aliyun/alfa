@@ -5,6 +5,7 @@ const AlfaWidget = createAlfaWidget({
   name: '@ali/alfa-cloud-home-widget-alfa-widget-demo',
   locale: 'en_US',
   loading: false,
+  delay: 6000,
   // dynamicConfig: true,
 });
 

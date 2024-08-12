@@ -145,7 +145,7 @@ export default function createApplication(loader: BaseLoader) {
       name, version, manifest, loading, customProps, className, style, container,
       entry, url, logger: customLogger, deps, env, beforeMount, afterMount, beforeUnmount,
       afterUnmount, beforeUpdate, sandbox: customSandbox, locale, dynamicConfig, noCache,
-      syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory,
+      syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory, delay,
     } = props;
     const { handleExternalLink } = customProps;
     const [appInstance, setAppInstance] = useState<MicroApplication | null>(null);
@@ -327,6 +327,14 @@ export default function createApplication(loader: BaseLoader) {
         countRegister(memoOptions.name);
 
         const fakeBody = memoOptions.container || appRef.current || document.body;
+
+        if (delay) {
+          await new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(undefined);
+            }, delay);
+          });
+        }
 
         const { app, logger, version: realVersion } = await loader.register<C>({
           ...memoOptions,
