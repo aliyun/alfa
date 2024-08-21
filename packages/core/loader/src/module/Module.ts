@@ -13,6 +13,8 @@ export class Record<T = any> {
     [key: string]: any;
   };
   context: any;
+  // 唯一 id，用来绑定上下文和 script 脚本的关系
+  uuid: string;
 }
 
 export class Module {

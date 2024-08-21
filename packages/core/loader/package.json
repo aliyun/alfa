@@ -1,6 +1,6 @@
 {
   "name": "@alicloud/console-os-loader",
-  "version": "1.4.36",
+  "version": "1.4.37",
   "description": "Console OS Loader",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "tslib": "^2.4.0"
+    "tslib": "^2.4.0",
+    "uuid": "^10.0.0"
   }
 }

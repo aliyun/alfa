@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { globalModule } from './module';
 import { Module, Record } from './module/Module';
 import { IBundleOption } from './type';
@@ -58,7 +60,7 @@ function onScriptError(id: string, script: HTMLScriptElement, timeout: number) {
  * append script
  * @param {IBundleOption} bundle
  */
-function jsonpRequire(id: string, url: string) {
+function jsonpRequire(id: string, url: string, uuid: string) {
   const script = document.createElement('script');
   script.charset = 'utf-8';
   script.src = url;
@@ -66,6 +68,7 @@ function jsonpRequire(id: string, url: string) {
   script.setAttribute('nonce', '');
   // 用于加载的脚本判断来源
   script.setAttribute('data-from', 'alfa');
+  script.setAttribute('data-uuid', uuid);
 
   const timeout = window.setTimeout(() => {
     onScriptError(id, script, timeout);
@@ -128,6 +131,7 @@ export async function requireEnsure<T>(bundle: IBundleOption) {
         chunkRecord.reject = reject;
         chunkRecord.context = bundle.context;
         chunkRecord.deps = bundle.deps;
+        chunkRecord.uuid = uuidv4();
         Module.record.set(bundle.id, chunkRecord);
       });
       chunkRecord.promise = promise;
@@ -136,7 +140,7 @@ export async function requireEnsure<T>(bundle: IBundleOption) {
       if (bundle.xmlrequest) {
         xmlRequire(bundle.id, bundle.url, transform);
       } else {
-        jsonpRequire(bundle.id, bundle.url);
+        jsonpRequire(bundle.id, bundle.url, chunkRecord.uuid);
       }
     }
   }
