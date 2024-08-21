@@ -42,12 +42,20 @@ function increaseSpecifityOfRule(rule: postcss.Rule, opts: IOptions, cachedIconN
     return `${opts.stackableRoot.repeat(opts.repeat) } ${ selector}`;
   });
 
-  rule.walkDecls('font-family', (decl) => {
-    const fontName = normalizeFontName(decl.value);
-    if (cachedIconName[fontName]) {
-      decl.value = `${normalizeId(opts.stackableRoot)}${fontName}`;
-    }
-  });
+  if (Object.keys(cachedIconName).length) {
+    rule.walkDecls('font-family', (decl) => {
+      const fontName = normalizeFontName(decl.value);
+      if (cachedIconName[fontName]) {
+        decl.value = `${normalizeId(opts.stackableRoot)}${fontName}`;
+      }
+    });
+
+    rule.walkDecls('font', (decl) => {
+      decl.value = decl.value.replace(new RegExp(`[\\s|:](${Object.keys(cachedIconName).join('|')});`), (match, $1) => {
+        return `${normalizeId(opts.stackableRoot)}${$1}`;
+      });
+    });
+  }
 
   if (opts.overrideIds) {
     if (
