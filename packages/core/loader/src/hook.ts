@@ -64,7 +64,7 @@ export const hook = (id: string, resolver: BundleResolver, script?: HTMLOrSVGScr
     const uuid = script?.getAttribute?.('data-uuid');
 
     // 做循环加载，如果子模块中需要加载某个模块优先去父模块去找
-    if ((!chunkRecord && !scriptRecord) || chunkRecord.uuid !== uuid) {
+    if ((!chunkRecord && !scriptRecord) || chunkRecord?.uuid !== uuid) {
       // 为了防止一个 ConsoleOS 子应用作为容器单独加载的时候，__CONSOLE_OS_GLOBAL_HOOK__ 为空函数的问题
       return findModuleInParent(id, resolver, script);
     }
