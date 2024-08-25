@@ -63,8 +63,18 @@ export const hook = (id: string, resolver: BundleResolver, script?: HTMLOrSVGScr
     // 可能存在多个脚本加载同一个微应用，需要通过 uuid 区分
     const uuid = script?.getAttribute?.('data-uuid');
 
-    // 做循环加载，如果子模块中需要加载某个模块优先去父模块去找
-    if ((!chunkRecord && !scriptRecord) || (uuid && chunkRecord?.uuid !== uuid)) {
+    // hook 嵌套时，当前上下文查询不到微应用信息往下遍历查询
+    // 加载的脚本存在 uuid 时，需要校验 uuid
+    if (
+      (!chunkRecord && !scriptRecord)
+      || (
+        uuid
+        && (
+          (chunkRecord && chunkRecord?.uuid !== uuid)
+          || (scriptRecord && scriptRecord?.uuid !== uuid)
+        )
+      )
+    ) {
       // 为了防止一个 ConsoleOS 子应用作为容器单独加载的时候，__CONSOLE_OS_GLOBAL_HOOK__ 为空函数的问题
       return findModuleInParent(id, resolver, script);
     }
