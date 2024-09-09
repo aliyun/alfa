@@ -25,3 +25,20 @@ export const isOsContext = (): boolean => {
     return !!(window as IWin).__IS_CONSOLE_OS_CONTEXT__;
   }
 };
+
+/**
+ * set native object property
+ * @param obj
+ * @param propertyName
+ * @param value
+ * @returns
+ */
+export const setNativeProperty = (obj: any, propertyName: string, value: any) => {
+  const desc = Object.getOwnPropertyDescriptor(obj, propertyName);
+
+  // in strict mode, Cannot set property go of [xx] which has only a getter
+  if (desc && typeof desc.set === 'undefined') return;
+
+  obj[propertyName] = value;
+};
+

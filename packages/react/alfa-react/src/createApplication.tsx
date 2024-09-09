@@ -4,7 +4,7 @@ import { ConsoleRegion, ConsoleResourceGroup, ConsoleContext } from '@alicloud/x
 import { forApp } from '@alicloud/console-base-messenger';
 
 import Loading from './components/Loading';
-import { normalizeName } from './utils';
+import { normalizeName, setNativeProperty } from './utils';
 import { countRegister } from './utils/counter';
 import { AlfaFactoryOption, MicroApplication } from './types';
 import { version as loaderVersion } from './version';
@@ -369,35 +369,33 @@ export default function createApplication(loader: BaseLoader) {
           // update context history according to path
           if (path) originalReplaceState(getHistoryState(), '', path.replace(/\/+/g, '/'));
 
-          if (frameWindow) {
-            frameWindow.history.pushState = (data, unused, _url) => {
-              if ($syncHistory.current) {
-                const nextPath = addBasename(_url?.toString() || '', $basename.current);
-                if (`${nextPath}` !== peelPath(window.location)) {
-                  window.history.pushState(data, unused, nextPath);
-                  onSyncHistory && onSyncHistory('push', nextPath, data);
-                }
-
-                originalReplaceState(data, unused, _url as string);
-              } else {
-                originalPushState(data, unused, _url as string);
-              }
-            };
-
-            frameWindow.history.replaceState = (data, unused, _url) => {
+          frameWindow.history.pushState = (data, unused, _url) => {
+            if ($syncHistory.current) {
               const nextPath = addBasename(_url?.toString() || '', $basename.current);
-              if ($syncHistory.current) {
-                window.history.replaceState(data, unused, nextPath);
-                onSyncHistory && onSyncHistory('replace', nextPath, data);
+              if (`${nextPath}` !== peelPath(window.location)) {
+                window.history.pushState(data, unused, nextPath);
+                onSyncHistory && onSyncHistory('push', nextPath, data);
               }
-              originalReplaceState(data, unused, _url as string);
-            };
 
-            // 劫持微应用的返回
-            frameWindow.history.go = (n?: number) => {
-              window.history.go(n);
-            };
-          }
+              originalReplaceState(data, unused, _url as string);
+            } else {
+              originalPushState(data, unused, _url as string);
+            }
+          };
+
+          frameWindow.history.replaceState = (data, unused, _url) => {
+            const nextPath = addBasename(_url?.toString() || '', $basename.current);
+            if ($syncHistory.current) {
+              window.history.replaceState(data, unused, nextPath);
+              onSyncHistory && onSyncHistory('replace', nextPath, data);
+            }
+            originalReplaceState(data, unused, _url as string);
+          };
+
+          // 劫持微应用的返回
+          setNativeProperty(frameWindow.history, 'go', (n?: number) => {
+            window.history.go(n);
+          });
         }
 
         await app.mount(fakeBody, {
@@ -432,10 +430,13 @@ export default function createApplication(loader: BaseLoader) {
 
         const frameHistory = App.context.baseFrame?.contentWindow?.history;
 
+        // reset method of frame history
         if (frameHistory) {
           if (originalPushState !== frameHistory.pushState) frameHistory.pushState = originalPushState;
           if (originalReplaceState !== frameHistory.replaceState) frameHistory.replaceState = originalReplaceState;
-          if (originalGo !== frameHistory.go) frameHistory.go = originalGo;
+          if (originalGo !== frameHistory.go) {
+            setNativeProperty(frameHistory, 'go', originalGo);
+          }
         }
 
         App.unmount();

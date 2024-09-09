@@ -1,6 +1,6 @@
 {
   "name": "@alicloud/alfa-react",
-  "version": "1.6.1",
+  "version": "1.6.2-alpha.0",
   "description": "Alfa Framework (React Version)",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -8,7 +8,7 @@
   "author": "pushiming",
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run version && npm run build && npm run babel && npm run babel:esm && npm run types",
+    "prepublish": "npm run version && npm run babel && npm run babel:esm && npm run types",
     "pub": "pnpm publish",
     "build": "breezr build --engine webpack",
     "babel": "breezr build --engine babel",
