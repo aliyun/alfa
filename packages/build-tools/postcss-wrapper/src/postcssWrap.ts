@@ -51,8 +51,8 @@ function increaseSpecifityOfRule(rule: postcss.Rule, opts: IOptions, cachedIconN
     });
 
     rule.walkDecls('font', (decl) => {
-      decl.value = decl.value.replace(new RegExp(`[\\s|:](${Object.keys(cachedIconName).join('|')});`), (match, $1) => {
-        return `${normalizeId(opts.stackableRoot)}${$1}`;
+      decl.value = decl.value.replace(new RegExp(`^([\\w\\d\\s\\/]*\\s|\\s*)(${Object.keys(cachedIconName).join('|')})$`), (match, $1, $2) => {
+        return `${$1}${normalizeId(opts.stackableRoot)}${$2}`;
       });
     });
   }
