@@ -58,6 +58,13 @@ export interface AlfaFactoryOption extends IAppConfig {
    * 延迟加载
    */
   delay?: number;
+  /**
+   * 优先级
+   * - high: 尽可能早的加载
+   * - medium: 当 mount 发生后并且 high priority 队列清空后开始加载
+   * - low: 当出现在视窗内并且更高优先级的队列全部清空后，最晚不会迟于 10s 开始加载
+   */
+  priority?: 'high' | 'medium' | 'low';
 }
 
 // export interface CommonProps {

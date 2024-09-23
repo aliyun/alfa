@@ -66,6 +66,7 @@ export interface IApplicationProps<C = any> extends AlfaFactoryOption {
    * 注入给子应用的 history 实例，不推荐使用
    */
   history?: any;
+  preLoader?: BaseLoader['register'];
 }
 
 interface IWin {
@@ -146,6 +147,7 @@ export default function createApplication(loader: BaseLoader) {
       entry, url, logger: customLogger, deps, env, beforeMount, afterMount, beforeUnmount,
       afterUnmount, beforeUpdate, sandbox: customSandbox, locale, dynamicConfig, noCache,
       syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory, delay,
+      preLoader,
     } = props;
     const { handleExternalLink } = customProps;
     const [appInstance, setAppInstance] = useState<MicroApplication | null>(null);
@@ -336,10 +338,16 @@ export default function createApplication(loader: BaseLoader) {
           });
         }
 
-        const { app, logger, version: realVersion } = await loader.register<C>({
-          ...memoOptions,
-          container: fakeBody,
-        });
+        const { app, logger, version: realVersion } = preLoader ?
+          await preLoader({
+            ...memoOptions,
+            container: fakeBody,
+          })
+          :
+          await loader.register<C>({
+            ...memoOptions,
+            container: fakeBody,
+          });
 
         setReleaseVersion(realVersion || 'unknown');
 

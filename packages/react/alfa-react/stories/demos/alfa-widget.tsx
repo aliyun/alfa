@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { createAlfaWidget, addGlobalRequestInterceptor } from '../../src';
-
-const AlfaWidget = createAlfaWidget({
-  name: '@ali/alfa-cloud-home-widget-alfa-widget-demo',
-  locale: 'en_US',
-  loading: false,
-  delay: 6000,
-  // dynamicConfig: true,
-});
+import { useAlfaWidget, addGlobalRequestInterceptor } from '../../src';
 
 addGlobalRequestInterceptor((config) => {
   console.info(config);
 
   return config;
-})
+});
 
 const Wrapper = (props) => {
-  return <AlfaWidget {...props} />
-}
+  const AlfaWidget = useAlfaWidget({
+    name: '@ali/alfa-cloud-home-widget-alfa-widget-demo',
+    locale: 'en_US',
+    loading: false,
+    // delay: 6000,
+    priority: 'high',
+    // dynamicConfig: true,
+  });
+
+  if (!AlfaWidget) return null;
+
+  return <AlfaWidget {...props} />;
+};
 
 const Basic: React.FC<{}> = () => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   return (
     <div>
