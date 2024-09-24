@@ -49,7 +49,7 @@ class Context {
     if (disableBody) {
       body = document.body;
     } else if (!body) {
-      body = document.createElement('body');
+      body = document.createElement('div');
       document.documentElement.appendChild(body);
     }
 

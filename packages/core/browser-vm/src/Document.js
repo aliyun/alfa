@@ -8,7 +8,7 @@
 import { injectHTMLScriptElement } from './utils/HTMLScriptElement';
 
 class Document {
-  constructor(options = {}, context, frame) {
+  constructor(options = {}, context) {
     const eventListeners = [];
 
     return new Proxy(document, {
