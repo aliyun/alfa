@@ -46,6 +46,8 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
   if (priority === 'high') {
     const p = loader.register({
       ...option,
+      // 必须设置 container，否则沙箱会创建插入一个新的 body
+      container: document.body,
       dynamicConfig: typeof dynamicConfig === 'boolean' ? dynamicConfig : !manifest,
     });
 
