@@ -9,6 +9,7 @@ import createApplication from './createApplication';
 import beforeResolveHook from './hooks/beforeResolveHook';
 import beforeLoadHook from './hooks/beforeLoadHook';
 import { isOneConsole } from './helpers/oneConsole';
+import Loading from './components/Loading';
 import type { IApplicationCustomProps } from './createApplication';
 
 const loader = BaseLoader.create();
@@ -31,7 +32,7 @@ type IProps = Omit<IApplicationCustomProps, 'consoleBase' | 'path' | 'appConfig'
 const Application = createApplication(loader);
 
 function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
-  const { name, dependencies, priority, dynamicConfig, manifest } = option || {};
+  const { name, dependencies, priority, dynamicConfig, manifest, loading, lazyLoad } = option || {};
 
   if (name.match(/@ali\/widget-/)) {
     // TODO load style
@@ -66,11 +67,13 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
     return (props: P & IProps) => (
       // Compatible with old logic
       // props should not passed in errorBoundary
-      <LazyLoad height={1} once>
+      <LazyLoad
+        placeholder={<Loading loading={loading} />}
+        {...{ ...lazyLoad }}
+      >
         <ErrorBoundary {...props}>
           <Application
             {...passedInOption}
-          // name={name}
             style={props.style || passedInOption.style}
             deps={dependencies || {}}
             customProps={{ ...props }}
@@ -87,7 +90,6 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
     <ErrorBoundary {...props}>
       <Application
         {...passedInOption}
-          // name={name}
         style={props.style || passedInOption.style}
         deps={dependencies || {}}
         customProps={{ ...props }}

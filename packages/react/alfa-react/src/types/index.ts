@@ -60,11 +60,30 @@ export interface AlfaFactoryOption extends IAppConfig {
   delay?: number;
   /**
    * 优先级
-   * - high: 尽可能早的加载
-   * - medium: 当 mount 发生后并且 high priority 队列清空后开始加载
-   * - low: 当出现在视窗内并且更高优先级的队列全部清空后，最晚不会迟于 10s 开始加载
+   * - high: 在 mount 前尽可能早的加载
+   * - medium: mount 后开始加载
+   * - low: 懒加载，出现在视窗内开始加载
    */
   priority?: 'high' | 'medium' | 'low';
+  /**
+   * 懒加载配置，配合 priority low 使用
+   */
+  lazyLoad?: {
+    /**
+     * 相对于视窗偏移位置就开始加载
+     */
+    offset?: number | number[] | undefined;
+    throttle?: number | boolean | undefined;
+    debounce?: number | boolean | undefined;
+    /**
+     * 占位
+     */
+    placeholder?: React.ReactNode | undefined;
+    /**
+     * 监听 scroll 事件的节点，当父节点设置 overflow 时会导致 window 无法监听到 scroll 事件
+     */
+    scrollContainer?: string | Element | undefined;
+  };
 }
 
 // export interface CommonProps {
