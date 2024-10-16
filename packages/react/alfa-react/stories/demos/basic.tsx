@@ -26,6 +26,7 @@ window.ALIYUN_CONSOLE_CONFIG = {
   },
 };
 
+// @ts-ignore
 window.ALIYUN_CONSOLE_GLOBAL = {
   HOST_GROUP_REGIOINS: {
     OFFICIAL: [{ regionId: 'cn-beijing' }],

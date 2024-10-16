@@ -32,7 +32,10 @@ type IProps = Omit<IApplicationCustomProps, 'consoleBase' | 'path' | 'appConfig'
 const Application = createApplication(loader);
 
 function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
-  const { name, dependencies, priority, dynamicConfig, manifest, loading, lazyLoad } = option || {};
+  const {
+    name, dependencies, priority, dynamicConfig,
+    manifest, loading, lazyLoad, delay,
+  } = option || {};
 
   if (name.match(/@ali\/widget-/)) {
     // TODO load style
@@ -63,40 +66,70 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
     passedInOption.sandbox.sandBoxUrl = 'about:blank';
   }
 
+  const useDelay = () => {
+    return useMemo(() => {
+      if (typeof delay === 'number') {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, delay);
+        });
+      }
+
+      if (typeof delay === 'function') {
+        const fnReturn = delay();
+        if (typeof fnReturn.then === 'function') return fnReturn;
+        if (typeof fnReturn === 'number') return fnReturn;
+      }
+
+      return undefined;
+    }, []);
+  };
+
   if (priority === 'low') {
-    return (props: P & IProps) => (
+    return (props: P & IProps) => {
+      const delayPromise = useDelay();
+
       // Compatible with old logic
       // props should not passed in errorBoundary
-      <LazyLoad
-        placeholder={<Loading loading={loading} />}
-        {...{ ...lazyLoad }}
-      >
-        <ErrorBoundary {...props}>
-          <Application
-            {...passedInOption}
-            style={props.style || passedInOption.style}
-            deps={dependencies || {}}
-            customProps={{ ...props }}
-            preLoader={preLoader}
-          />
-        </ErrorBoundary>
-      </LazyLoad>
-    );
+      return (
+        <LazyLoad
+          placeholder={<Loading loading={loading} />}
+          {...{ ...lazyLoad }}
+        >
+          <ErrorBoundary {...props}>
+            <Application
+              {...passedInOption}
+              delayPromise={delayPromise}
+              style={props.style || passedInOption.style}
+              deps={dependencies || {}}
+              customProps={{ ...props }}
+              preLoader={preLoader}
+            />
+          </ErrorBoundary>
+        </LazyLoad>
+      );
+    };
   }
 
-  return (props: P & IProps) => (
+  return (props: P & IProps) => {
+    const delayPromise = useDelay();
+
     // Compatible with old logic
     // props should not passed in errorBoundary
-    <ErrorBoundary {...props}>
-      <Application
-        {...passedInOption}
-        style={props.style || passedInOption.style}
-        deps={dependencies || {}}
-        customProps={{ ...props }}
-        preLoader={preLoader}
-      />
-    </ErrorBoundary>
-  );
+    return (
+      <ErrorBoundary {...props}>
+        <Application
+          {...passedInOption}
+          delayPromise={delayPromise}
+          style={props.style || passedInOption.style}
+          deps={dependencies || {}}
+          customProps={{ ...props }}
+          preLoader={preLoader}
+        />
+      </ErrorBoundary>
+    );
+  };
 }
 
 /**

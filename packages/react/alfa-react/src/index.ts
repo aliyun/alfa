@@ -4,5 +4,6 @@ export { default as createAlfaWidget, useAlfaWidget } from './createAlfaWidget';
 export { eventEmitter as widgetEventEmitter } from './widget/index';
 export { default as addGlobalRequestInterceptor } from './addGlobalRequestInterceptor';
 export * from './utils';
+export { forceCheck } from 'react-lazyload';
 // todo
 export { createEventBus, prefetch } from '@alicloud/alfa-core';

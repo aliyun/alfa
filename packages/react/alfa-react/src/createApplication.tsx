@@ -8,6 +8,7 @@ import { normalizeName, setNativeProperty } from './utils';
 import { countRegister } from './utils/counter';
 import { AlfaFactoryOption, MicroApplication } from './types';
 import { version as loaderVersion } from './version';
+import { forceCheck } from 'react-lazyload';
 
 export interface IApplicationCustomProps {
   /**
@@ -67,6 +68,7 @@ export interface IApplicationProps<C = any> extends AlfaFactoryOption {
    */
   history?: any;
   preLoader?: BaseLoader['register'];
+  delayPromise?: Promise<any>;
 }
 
 interface IWin {
@@ -146,7 +148,7 @@ export default function createApplication(loader: BaseLoader) {
       name, version, manifest, loading, customProps, className, style, container,
       entry, url, logger: customLogger, deps, env, beforeMount, afterMount, beforeUnmount,
       afterUnmount, beforeUpdate, sandbox: customSandbox, locale, dynamicConfig, noCache,
-      syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory, delay,
+      syncHistory, syncRegion, syncResourceGroup, basename, channel, onSyncHistory, delayPromise,
       preLoader,
     } = props;
     const { handleExternalLink } = customProps;
@@ -330,13 +332,7 @@ export default function createApplication(loader: BaseLoader) {
 
         const fakeBody = memoOptions.container || appRef.current || document.body;
 
-        if (delay) {
-          await new Promise((resolve) => {
-            setTimeout(() => {
-              resolve(undefined);
-            }, delay);
-          });
-        }
+        if (delayPromise) await delayPromise;
 
         const { app, logger, version: realVersion } = preLoader ?
           await preLoader({
@@ -410,7 +406,14 @@ export default function createApplication(loader: BaseLoader) {
           customProps,
         });
 
+        // 降低优先级
+        setTimeout(() => {
+          forceCheck();
+        }, 0);
+
         logger?.record && logger?.record({
+          REQUEST_VERSION: memoOptions.version,
+          RESPONSE_VERSION: realVersion,
           END_TIME: Date.now(),
         });
 

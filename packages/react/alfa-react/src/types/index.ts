@@ -57,7 +57,7 @@ export interface AlfaFactoryOption extends IAppConfig {
   /**
    * 延迟加载
    */
-  delay?: number;
+  delay?: number | (() => Promise<any>);
   /**
    * 优先级
    * - high: 在 mount 前尽可能早的加载

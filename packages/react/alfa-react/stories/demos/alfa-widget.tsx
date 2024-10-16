@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAlfaWidget, addGlobalRequestInterceptor } from '../../src';
 
 addGlobalRequestInterceptor((config) => {
@@ -12,7 +12,10 @@ const Wrapper = (props) => {
     name: '@ali/alfa-cloud-home-widget-alfa-widget-demo',
     locale: 'en_US',
     loading: false,
-    // delay: 6000,
+    env: 'pre',
+    delay: () => new Promise((resolve) => setTimeout(() => {
+      resolve(undefined);
+    }, 5000)),
     priority: 'high',
     // dynamicConfig: true,
   });
