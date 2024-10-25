@@ -1,5 +1,5 @@
 function isAboutBlank(loc) {
-  return loc && loc.href === 'about:blank';
+  return loc && loc.href.startsWith('about:blank');
 }
 
 class Location {
@@ -30,15 +30,13 @@ class Location {
               }
             };
           default:
-            break;
-        }
-
-        if (typeof location[name] === 'function') {
-          return location[name].bind && location[name].bind(target);
-        } else if (isAboutBlank(location)) {
-          return window.location[name];
-        } else {
-          return location[name];
+            if (typeof location[name] === 'function') {
+              return location[name].bind && location[name].bind(target);
+            } else if (isAboutBlank(location)) {
+              return window.location[name];
+            } else {
+              return location[name];
+            }
         }
       },
     });

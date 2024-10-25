@@ -1,15 +1,14 @@
 {
   "name": "@alicloud/console-os-browser-vm",
-  "version": "1.4.36",
+  "version": "1.4.37-alpha.0",
   "description": "browser virtual machine",
   "main": "lib/index.js",
   "module": "es/index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run clean && npm run build && npm run babel && npm run babel:esm",
+    "prepublishOnly": "npm run clean && npm run babel && npm run babel:esm",
     "babel": "breezr build --engine babel",
     "babel:esm": "breezr build --engine babel --es-module",
-    "build": "breezr build --engine webpack",
     "storybook": "breezr start-storybook",
     "test": "breezr test:unit --coverage --env jsdom",
     "clean": "rm -rf es build lib yarn.lock"
