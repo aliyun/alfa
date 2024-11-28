@@ -42,3 +42,4 @@ export const setNativeProperty = (obj: any, propertyName: string, value: any) =>
   obj[propertyName] = value;
 };
 
+export const IS_SSR = typeof document === 'undefined';

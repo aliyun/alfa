@@ -10,6 +10,7 @@ import beforeResolveHook from './hooks/beforeResolveHook';
 import beforeLoadHook from './hooks/beforeLoadHook';
 import { isOneConsole } from './helpers/oneConsole';
 import Loading from './components/Loading';
+import { IS_SSR } from './utils';
 import type { IApplicationCustomProps } from './createApplication';
 
 const loader = BaseLoader.create();
@@ -47,7 +48,7 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
 
   let preLoader: () => Promise<any>;
 
-  if (priority === 'high') {
+  if (priority === 'high' && !IS_SSR) {
     const p = loader.register({
       ...option,
       // 必须设置 container，否则沙箱会创建插入一个新的 body
@@ -86,7 +87,7 @@ function createAlfaWidget<P = any>(option: AlfaFactoryOption): React.FC<any> {
     }, []);
   };
 
-  if (priority === 'low') {
+  if (priority === 'low' && !IS_SSR) {
     return (props: P & IProps) => {
       const delayPromise = useDelay();
 
