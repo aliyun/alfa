@@ -63,13 +63,13 @@ class Context {
     this.window.__IS_CONSOLE_OS_CONTEXT__ = true;
   }
 
-  async loadScripts(url) {
+  async loadScripts(url, script) {
     const resp = await fetch(url, { credentials: getFetchCredentials(url) });
     const code = await resp.text();
-    this.evalScript(code, url);
+    this.evalScript(code, url, script);
   }
 
-  evalScript(code, url = '') {
+  evalScript(code, url = '', script) {
     const currentScript = this.document.createElement('script');
     currentScript.src = url;
 
@@ -105,7 +105,7 @@ class Context {
         this.window,
         {
           ...this,
-          __os_current_script__: currentScript,
+          __os_current_script__: script || currentScript,
         },
       );
   }

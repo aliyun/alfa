@@ -1,6 +1,6 @@
 {
   "name": "@alicloud/console-os-browser-vm",
-  "version": "1.4.37-alpha.0",
+  "version": "1.4.37-alpha.1",
   "description": "browser virtual machine",
   "main": "lib/index.js",
   "module": "es/index.js",

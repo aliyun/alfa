@@ -11,7 +11,7 @@ const makeElInjector = (originMethod, methodName) => function (el, ...args) {
     && el.src && notAllowed
     && !getJsonCallback(el.src)
   ) {
-    return el.ownerContext.loadScripts(el.src).then(() => {
+    return el.ownerContext.loadScripts(el.src, el).then(() => {
       const fns = el._listenerMap.get('load');
       if (fns) {
         fns.forEach((fn) => { fn(); });
